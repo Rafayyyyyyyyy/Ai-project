@@ -55,8 +55,8 @@ user_input = st.number_input("Enter the kilometers driven:", min_value=0.0, step
 if user_input > 0:
     # Calculate predicted price based on kilometers driven
     predicted_price = model.predict(pd.DataFrame([[user_input]], columns=['kms Driven']))[0]
-    # Ensure price does not drop below 3 Lakh
-    adjusted_price = max(predicted_price, 3.0)
+    # Ensure price does not drop below 1 Lakh
+    adjusted_price = max(predicted_price, 1.0)
     st.write(f"Predicted Price: {adjusted_price:.2f} Lakh")
 
 # Display raw data option
