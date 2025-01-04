@@ -1,11 +1,10 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import streamlit as st
 
-# Streamlit app title
+# Streamlit app
 st.title("Car Price Prediction App")
 
 # Load the dataset (make sure 'honda_car_selling.csv' is available in the same directory)
@@ -49,16 +48,6 @@ y_pred = model.predict(X_test)
 # Evaluate the model
 mse = mean_squared_error(y_test, y_pred)
 st.write(f"Mean Squared Error: {mse}")
-
-# Visualize the results with matplotlib
-plt.figure(figsize=(10, 6))
-plt.scatter(X_test, y_test, color='blue', label='Actual Prices')
-plt.plot(X_test, y_pred, color='red', label='Predicted Prices')
-plt.title('Car Price Prediction')
-plt.xlabel('Kilometers Driven')
-plt.ylabel('Price (Lakh)')
-plt.legend()
-st.pyplot(plt)  # Display the plot in the Streamlit app
 
 # User input for prediction
 user_input = st.number_input("Enter the kilometers driven:", min_value=0.0, step=100.0)
