@@ -7,7 +7,7 @@ import streamlit as st
 # Streamlit app
 st.title("Car Price Prediction App")
 
-# Load and clean the dataset
+# Load the dataset (make sure 'honda_car_selling.csv' is available in the same directory)
 file_path = 'honda_car_selling.csv'
 car_data = pd.read_csv(file_path)
 
