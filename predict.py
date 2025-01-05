@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
@@ -73,6 +74,17 @@ plt.title('Car Price Prediction')
 plt.xlabel('Kilometers Driven')
 plt.ylabel('Price (Lakh)')
 plt.legend()
+st.pyplot(plt)
+
+# Bar graph of average price by model
+st.subheader("Average Price by Car Model")
+avg_price_by_model = car_data.groupby('Car Model')['Price'].mean().sort_values()
+plt.figure(figsize=(10, 6))
+sns.barplot(x=avg_price_by_model.index, y=avg_price_by_model.values)
+plt.xticks(rotation=45)
+plt.title("Average Price by Car Model")
+plt.xlabel("Car Model")
+plt.ylabel("Average Price (Lakh)")
 st.pyplot(plt)
 
 # User input for prediction
