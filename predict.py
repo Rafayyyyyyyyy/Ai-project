@@ -76,15 +76,18 @@ plt.ylabel('Price (Lakh)')
 plt.legend()
 st.pyplot(plt)
 
-# Bar graph of average price by model
-st.subheader("Average Price by Car Model")
-avg_price_by_model = car_data.groupby('Car Model')['Price'].mean().sort_values()
+# Line chart for price against year
+st.subheader("Price by Year")
+# Group data by 'Year' and calculate the mean price for each year
+avg_price_by_year = car_data.groupby('Year')['Price'].mean().sort_index()
+
+# Plotting the line chart for price by year
 plt.figure(figsize=(10, 6))
-sns.barplot(x=avg_price_by_model.index, y=avg_price_by_model.values)
-plt.xticks(rotation=45)
-plt.title("Average Price by Car Model")
-plt.xlabel("Car Model")
+sns.lineplot(x=avg_price_by_year.index, y=avg_price_by_year.values, marker='o', color='b')
+plt.title("Price by Year")
+plt.xlabel("Year")
 plt.ylabel("Average Price (Lakh)")
+plt.grid(True)
 st.pyplot(plt)
 
 # Generalized pie chart of kilometers driven ranges
@@ -126,3 +129,4 @@ if user_input > 0:
 # Display raw data option
 if st.checkbox("Show raw data"):
     st.write(car_data)
+
