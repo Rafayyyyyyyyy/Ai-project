@@ -10,8 +10,12 @@ import streamlit as st
 st.title("Car Price Prediction App")
 
 # Load the dataset
-file_path = '/mnt/data/honda_car_selling.csv'
-car_data = pd.read_csv(file_path)
+file_path = 'honda_car_selling.csv'
+try:
+    car_data = pd.read_csv(file_path)
+except FileNotFoundError:
+    st.error("The dataset file 'honda_car_selling.csv' was not found. Please upload the file and try again.")
+    st.stop()
 
 # Data cleaning
 car_data['kms Driven'] = car_data['kms Driven'].str.replace(' kms', '').str.replace(',', '').astype(float)
@@ -100,4 +104,3 @@ if user_input > 0:
 # Display raw data option
 if st.checkbox("Show raw data"):
     st.write(car_data)
-
