@@ -10,7 +10,7 @@ import streamlit as st
 st.title("Car Price Prediction App")
 
 # Load the dataset
-file_path = 'honda_car_selling.csv'
+file_path = '/mnt/data/honda_car_selling.csv'
 car_data = pd.read_csv(file_path)
 
 # Data cleaning
@@ -33,18 +33,18 @@ upper_bound_price = q3_price + 1.5 * iqr_price
 car_data = car_data[(car_data['kms Driven'] >= lower_bound_kms) & (car_data['kms Driven'] <= upper_bound_kms)]
 car_data = car_data[(car_data['Price'] >= lower_bound_price) & (car_data['Price'] <= upper_bound_price)]
 
-# User inputs for car model and transmission type
+# User inputs for car model and fuel type
 model_options = car_data['Car Model'].unique()
 selected_model = st.selectbox("Select the car model:", model_options)
 
-transmission_options = car_data['Suspension'].unique()
-selected_transmission = st.radio("Select the transmission type:", transmission_options)
+fuel_options = car_data['Fuel Type'].unique()
+selected_fuel = st.radio("Select the fuel type:", fuel_options)
 
 # Filter the data based on user selection
-filtered_data = car_data[(car_data['Car Model'] == selected_model) & (car_data['Suspension'] == selected_transmission)]
+filtered_data = car_data[(car_data['Car Model'] == selected_model) & (car_data['Fuel Type'] == selected_fuel)]
 
 if filtered_data.empty:
-    st.error("No data available for the selected model and transmission type.")
+    st.error("No data available for the selected model and fuel type.")
     st.stop()
 
 # Define features and target variable
