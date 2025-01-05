@@ -80,15 +80,22 @@ plt.ylabel('Price (Lakh)')
 plt.legend()
 st.pyplot(plt)
 
-# Bar graph of average price by model
-st.subheader("Average Price by Car Model")
-avg_price_by_model = car_data.groupby('Car Model')['Price'].mean().sort_values()
+# Bar graph of average price by year
+st.subheader("Average Price by Year")
+avg_price_by_year = car_data.groupby('Year')['Price'].mean().sort_index()
 plt.figure(figsize=(10, 6))
-sns.barplot(x=avg_price_by_model.index, y=avg_price_by_model.values)
-plt.xticks(rotation=45)
-plt.title("Average Price by Car Model")
-plt.xlabel("Car Model")
+sns.barplot(x=avg_price_by_year.index, y=avg_price_by_year.values)
+plt.title("Average Price by Year")
+plt.xlabel("Year")
 plt.ylabel("Average Price (Lakh)")
+st.pyplot(plt)
+
+# Pie chart of car distribution by fuel type
+st.subheader("Car Distribution by Fuel Type")
+fuel_type_distribution = car_data['Fuel Type'].value_counts()
+plt.figure(figsize=(8, 8))
+plt.pie(fuel_type_distribution, labels=fuel_type_distribution.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
+plt.title("Car Distribution by Fuel Type")
 st.pyplot(plt)
 
 # User input for prediction
