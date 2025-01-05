@@ -68,7 +68,7 @@ st.write(f"Mean Squared Error: {mse}")
 # Visualize the results using matplotlib
 plt.figure(figsize=(10, 6))
 plt.scatter(X_test, y_test, color='blue', label='Actual Prices')
-plt.plot(X_test, y_pred, color='red', label='Predicted Prices')
+plt.scatter(X_test, y_pred, color='red', label='Predicted Prices', alpha=0.7)
 plt.title('Car Price Prediction')
 plt.xlabel('Kilometers Driven')
 plt.ylabel('Price (Lakh)')
