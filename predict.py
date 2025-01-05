@@ -8,7 +8,7 @@ import streamlit as st
 # Streamlit app
 st.title("Car Price Prediction App")
 
-# Load the dataset (make sure 'honda_car_selling.csv' is available in the same directory)
+# Load the dataset
 file_path = 'honda_car_selling.csv'
 car_data = pd.read_csv(file_path)
 
@@ -32,9 +32,23 @@ upper_bound_price = q3_price + 1.5 * iqr_price
 car_data = car_data[(car_data['kms Driven'] >= lower_bound_kms) & (car_data['kms Driven'] <= upper_bound_kms)]
 car_data = car_data[(car_data['Price'] >= lower_bound_price) & (car_data['Price'] <= upper_bound_price)]
 
-# Define features and target variable (only km driven, drop other features)
-X = car_data[['kms Driven']]
-y = car_data['Price']
+# User inputs for car model and transmission type
+model_options = car_data['Car Model'].unique()
+selected_model = st.selectbox("Select the car model:", model_options)
+
+transmission_options = car_data['Suspension'].unique()
+selected_transmission = st.radio("Select the transmission type:", transmission_options)
+
+# Filter the data based on user selection
+filtered_data = car_data[(car_data['Car Model'] == selected_model) & (car_data['Suspension'] == selected_transmission)]
+
+if filtered_data.empty:
+    st.error("No data available for the selected model and transmission type.")
+    st.stop()
+
+# Define features and target variable
+X = filtered_data[['kms Driven']]
+y = filtered_data['Price']
 
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -53,12 +67,13 @@ st.write(f"Mean Squared Error: {mse}")
 # Visualize the results using matplotlib
 plt.figure(figsize=(10, 6))
 plt.scatter(X_test, y_test, color='blue', label='Actual Prices')
-plt.plot(X_test, y_pred, color='red', label='Predicted Prices')
+plt.scatter(X_test, y_pred, color='red', label='Predicted Prices')
+plt.plot(X_test, y_pred, color='red', linestyle='dashed', label='Regression Line')
 plt.title('Car Price Prediction')
 plt.xlabel('Kilometers Driven')
 plt.ylabel('Price (Lakh)')
 plt.legend()
-st.pyplot(plt)  # Display the plot in the Streamlit app
+st.pyplot(plt)
 
 # User input for prediction
 user_input = st.number_input("Enter the kilometers driven:", min_value=0.0, step=100.0)
@@ -72,4 +87,5 @@ if user_input > 0:
 
 # Display raw data option
 if st.checkbox("Show raw data"):
-    st.write(car_data)    
+    st.write(car_data)
+
