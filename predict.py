@@ -11,27 +11,44 @@ st.title("Car Price Prediction App")
 
 # Load the dataset
 file_path = 'honda_car_selling.csv'
-car_data = pd.read_csv(file_path)
+try:
+    car_data = pd.read_csv(file_path)
+except FileNotFoundError:
+    st.error("The dataset file was not found.")
+    st.stop()
 
 # Data cleaning
-car_data['kms Driven'] = car_data['kms Driven'].str.replace(' kms', '').str.replace(',', '').astype(float)
-car_data['Price'] = car_data['Price'].str.replace(' Lakh', '').str.replace(',', '').astype(float)
+if 'kms Driven' in car_data.columns and 'Price' in car_data.columns:
+    car_data['kms Driven'] = car_data['kms Driven'].str.replace(' kms', '').str.replace(',', '').astype(float)
+    car_data['Price'] = car_data['Price'].str.replace(' Lakh', '').str.replace(',', '').astype(float)
+else:
+    st.error("Expected columns 'kms Driven' and 'Price' not found in dataset.")
+    st.stop()
 
 # Remove outliers
-q1_kms = car_data['kms Driven'].quantile(0.25)
-q3_kms = car_data['kms Driven'].quantile(0.75)
-iqr_kms = q3_kms - q1_kms
-lower_bound_kms = q1_kms - 1.5 * iqr_kms
-upper_bound_kms = q3_kms + 1.5 * iqr_kms
+try:
+    q1_kms = car_data['kms Driven'].quantile(0.25)
+    q3_kms = car_data['kms Driven'].quantile(0.75)
+    iqr_kms = q3_kms - q1_kms
+    lower_bound_kms = q1_kms - 1.5 * iqr_kms
+    upper_bound_kms = q3_kms + 1.5 * iqr_kms
 
-q1_price = car_data['Price'].quantile(0.25)
-q3_price = car_data['Price'].quantile(0.75)
-iqr_price = q3_price - q1_price
-lower_bound_price = q1_price - 1.5 * iqr_price
-upper_bound_price = q3_price + 1.5 * iqr_price
+    q1_price = car_data['Price'].quantile(0.25)
+    q3_price = car_data['Price'].quantile(0.75)
+    iqr_price = q3_price - q1_price
+    lower_bound_price = q1_price - 1.5 * iqr_price
+    upper_bound_price = q3_price + 1.5 * iqr_price
 
-car_data = car_data[(car_data['kms Driven'] >= lower_bound_kms) & (car_data['kms Driven'] <= upper_bound_kms)]
-car_data = car_data[(car_data['Price'] >= lower_bound_price) & (car_data['Price'] <= upper_bound_price)]
+    car_data = car_data[(car_data['kms Driven'] >= lower_bound_kms) & (car_data['kms Driven'] <= upper_bound_kms)]
+    car_data = car_data[(car_data['Price'] >= lower_bound_price) & (car_data['Price'] <= upper_bound_price)]
+except KeyError as e:
+    st.error(f"Error in data cleaning: {e}")
+    st.stop()
+
+# Check if 'Model' and 'Transmission' columns exist
+if 'Model' not in car_data.columns or 'Transmission' not in car_data.columns:
+    st.error("Expected columns 'Model' and 'Transmission' not found in dataset.")
+    st.stop()
 
 # User inputs for car model and transmission type
 model_options = car_data['Model'].unique()
@@ -42,6 +59,10 @@ selected_transmission = st.radio("Select the transmission type:", transmission_o
 
 # Filter the data based on user selection
 filtered_data = car_data[(car_data['Model'] == selected_model) & (car_data['Transmission'] == selected_transmission)]
+
+if filtered_data.empty:
+    st.error("No data available for the selected model and transmission type.")
+    st.stop()
 
 # Define features and target variable
 X = filtered_data[['kms Driven']]
@@ -104,4 +125,3 @@ if user_input > 0:
 # Display raw data option
 if st.checkbox("Show raw data"):
     st.write(car_data)
-
