@@ -101,19 +101,16 @@ kms_distribution.plot(kind='pie', autopct='%1.1f%%', startangle=90, colors=sns.c
 plt.title("Kilometers Driven Distribution")
 st.pyplot(plt)
 
-# Generalized line chart for average price by year
-st.subheader("Average Price by Year")
+# Bar chart for distribution by Year
+st.subheader("Car Distribution by Year")
+# Count the number of cars for each year
+year_distribution = car_data['Year'].value_counts().sort_index()
 
-# Group data by 'Year' and calculate the mean price for each year
-avg_price_by_year = car_data.groupby('Year')['Price'].mean().sort_index()
-
-# Plotting the line chart for average price by year
 plt.figure(figsize=(10, 6))
-sns.lineplot(x=avg_price_by_year.index, y=avg_price_by_year.values, marker='o', color='b')
-plt.title("Average Price by Year")
+sns.barplot(x=year_distribution.index, y=year_distribution.values, palette='viridis')
+plt.title("Car Distribution by Year")
 plt.xlabel("Year")
-plt.ylabel("Average Price (Lakh)")
-plt.grid(True)
+plt.ylabel("Count of Cars")
 st.pyplot(plt)
 
 # User input for prediction
@@ -129,4 +126,3 @@ if user_input > 0:
 # Display raw data option
 if st.checkbox("Show raw data"):
     st.write(car_data)
-
