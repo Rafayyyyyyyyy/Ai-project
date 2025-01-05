@@ -90,12 +90,30 @@ plt.xlabel("Year")
 plt.ylabel("Average Price (Lakh)")
 st.pyplot(plt)
 
+# Generalized bar chart of average price by car model
+st.subheader("Generalized Average Price by Car Model")
+general_avg_price_by_model = car_data.groupby('Car Model')['Price'].mean().sort_values()
+plt.figure(figsize=(6, 4))
+sns.barplot(x=general_avg_price_by_model.values, y=general_avg_price_by_model.index, palette='muted')
+plt.title("Generalized Average Price by Car Model")
+plt.xlabel("Average Price (Lakh)")
+plt.ylabel("Car Model")
+st.pyplot(plt)
+
 # Pie chart of car distribution by fuel type
 st.subheader("Car Distribution by Fuel Type")
 fuel_type_distribution = car_data['Fuel Type'].value_counts()
 plt.figure(figsize=(8, 8))
 plt.pie(fuel_type_distribution, labels=fuel_type_distribution.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
 plt.title("Car Distribution by Fuel Type")
+st.pyplot(plt)
+
+# Smaller generalized pie chart of car distribution by model
+st.subheader("Generalized Car Distribution by Model")
+car_model_distribution = car_data['Car Model'].value_counts()
+plt.figure(figsize=(6, 6))
+plt.pie(car_model_distribution, labels=car_model_distribution.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
+plt.title("Car Distribution by Model")
 st.pyplot(plt)
 
 # User input for prediction
