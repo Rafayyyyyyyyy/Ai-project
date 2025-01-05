@@ -11,11 +11,7 @@ st.title("Car Price Prediction App")
 
 # Load the dataset
 file_path = 'honda_car_selling.csv'
-try:
-    car_data = pd.read_csv(file_path)
-except FileNotFoundError:
-    st.error("The dataset file 'honda_car_selling.csv' was not found. Please upload the file and try again.")
-    st.stop()
+car_data = pd.read_csv(file_path)
 
 # Data cleaning
 car_data['kms Driven'] = car_data['kms Driven'].str.replace(' kms', '').str.replace(',', '').astype(float)
@@ -37,18 +33,18 @@ upper_bound_price = q3_price + 1.5 * iqr_price
 car_data = car_data[(car_data['kms Driven'] >= lower_bound_kms) & (car_data['kms Driven'] <= upper_bound_kms)]
 car_data = car_data[(car_data['Price'] >= lower_bound_price) & (car_data['Price'] <= upper_bound_price)]
 
-# User inputs for car model and fuel type
+# User inputs for car model and transmission type
 model_options = car_data['Car Model'].unique()
 selected_model = st.selectbox("Select the car model:", model_options)
 
-fuel_options = car_data['Fuel Type'].unique()
-selected_fuel = st.radio("Select the fuel type:", fuel_options)
+transmission_options = car_data['Suspension'].unique()
+selected_transmission = st.radio("Select the transmission type:", transmission_options)
 
 # Filter the data based on user selection
-filtered_data = car_data[(car_data['Car Model'] == selected_model) & (car_data['Fuel Type'] == selected_fuel)]
+filtered_data = car_data[(car_data['Car Model'] == selected_model) & (car_data['Suspension'] == selected_transmission)]
 
 if filtered_data.empty:
-    st.error("No data available for the selected model and fuel type.")
+    st.error("No data available for the selected model and transmission type.")
     st.stop()
 
 # Define features and target variable
@@ -80,40 +76,41 @@ plt.ylabel('Price (Lakh)')
 plt.legend()
 st.pyplot(plt)
 
-# Bar graph of average price by year
-st.subheader("Average Price by Year")
-avg_price_by_year = car_data.groupby('Year')['Price'].mean().sort_index()
+# Bar graph of average price by model
+st.subheader("Average Price by Car Model")
+avg_price_by_model = car_data.groupby('Car Model')['Price'].mean().sort_values()
 plt.figure(figsize=(10, 6))
-sns.barplot(x=avg_price_by_year.index, y=avg_price_by_year.values)
-plt.title("Average Price by Year")
-plt.xlabel("Year")
+sns.barplot(x=avg_price_by_model.index, y=avg_price_by_model.values)
+plt.xticks(rotation=45)
+plt.title("Average Price by Car Model")
+plt.xlabel("Car Model")
 plt.ylabel("Average Price (Lakh)")
 st.pyplot(plt)
 
-# Generalized bar chart of average price by car model
-st.subheader("Generalized Average Price by Car Model")
-general_avg_price_by_model = car_data.groupby('Car Model')['Price'].mean().sort_values()
-plt.figure(figsize=(6, 4))
-sns.barplot(x=general_avg_price_by_model.values, y=general_avg_price_by_model.index, palette='muted')
-plt.title("Generalized Average Price by Car Model")
-plt.xlabel("Average Price (Lakh)")
-plt.ylabel("Car Model")
-st.pyplot(plt)
+# Generalized pie chart of kilometers driven ranges
+st.subheader("Distribution of Kilometers Driven")
+# Create bins for kms driven
+kms_bins = [0, 20000, 40000, 60000, 80000, 100000, 120000, 150000, 200000]
+kms_labels = ['0-20k', '20k-40k', '40k-60k', '60k-80k', '80k-100k', '100k-120k', '120k-150k', '150k-200k']
+car_data['kms_range'] = pd.cut(car_data['kms Driven'], bins=kms_bins, labels=kms_labels, right=False)
 
-# Pie chart of car distribution by fuel type
-st.subheader("Car Distribution by Fuel Type")
-fuel_type_distribution = car_data['Fuel Type'].value_counts()
+# Pie chart for kms driven ranges
+kms_distribution = car_data['kms_range'].value_counts()
 plt.figure(figsize=(8, 8))
-plt.pie(fuel_type_distribution, labels=fuel_type_distribution.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
-plt.title("Car Distribution by Fuel Type")
+kms_distribution.plot(kind='pie', autopct='%1.1f%%', startangle=90, colors=sns.color_palette('Set3', len(kms_distribution)))
+plt.title("Kilometers Driven Distribution")
 st.pyplot(plt)
 
-# Smaller generalized pie chart of car distribution by model
-st.subheader("Generalized Car Distribution by Model")
-car_model_distribution = car_data['Car Model'].value_counts()
-plt.figure(figsize=(6, 6))
-plt.pie(car_model_distribution, labels=car_model_distribution.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
-plt.title("Car Distribution by Model")
+# Bar chart for distribution by Year
+st.subheader("Car Distribution by Year")
+# Count the number of cars for each year
+year_distribution = car_data['Year'].value_counts().sort_index()
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=year_distribution.index, y=year_distribution.values, palette='viridis')
+plt.title("Car Distribution by Year")
+plt.xlabel("Year")
+plt.ylabel("Count of Cars")
 st.pyplot(plt)
 
 # User input for prediction
